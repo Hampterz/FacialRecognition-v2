@@ -496,4 +496,3 @@ For questions, issues, or contributions, please refer to the repository's issue 
 
 **Last Updated**: January 2025
 **Version**: 1.0
-**Author**: Sreyas
