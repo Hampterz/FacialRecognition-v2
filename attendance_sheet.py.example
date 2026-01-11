@@ -1,0 +1,69 @@
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+import os
+
+# Spreadsheet ID - Replace with your Google Spreadsheet ID
+# Get this from the URL: https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit
+SPREADSHEET_ID = "YOUR_SPREADSHEET_ID_HERE"
+
+# Credentials file path - Replace with path to your service account JSON file
+# Download from Google Cloud Console → IAM & Admin → Service Accounts
+CREDENTIALS_PATH = r"path\to\your\service-account-credentials.json"
+
+scope = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive",
+]
+
+# Initialize client
+_client = None
+_sheet = None
+
+def _get_client():
+    """Get or create the gspread client."""
+    global _client, _sheet
+    if _client is None:
+        if not os.path.exists(CREDENTIALS_PATH):
+            print(f"Error: Credentials file not found at {CREDENTIALS_PATH}")
+            return None, None
+        
+        try:
+            print(f"Loading credentials from: {CREDENTIALS_PATH}")
+            creds = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_PATH, scope)
+            print("Authorizing with Google Sheets API...")
+            _client = gspread.authorize(creds)
+            print(f"Opening spreadsheet with ID: {SPREADSHEET_ID}")
+            _sheet = _client.open_by_key(SPREADSHEET_ID).sheet1
+            print("Connected to Google Sheet successfully!")
+        except FileNotFoundError as e:
+            print(f"ERROR: Credentials file not found: {e}")
+            return None, None
+        except PermissionError as e:
+            error_msg = (
+                "PERMISSION ERROR: Google Sheets API is not enabled for this project.\n"
+                "Please enable it by visiting:\n"
+                "https://console.developers.google.com/apis/api/sheets.googleapis.com/overview\n"
+                "Then wait a few minutes and try again."
+            )
+            print(f"ERROR: {error_msg}")
+            return None, None
+        except Exception as e:
+            import traceback
+            error_str = str(e)
+            if "API has not been used" in error_str or "is disabled" in error_str:
+                error_msg = (
+                    "ERROR: Google Sheets API is not enabled.\n"
+                    "Please enable it in Google Cloud Console:\n"
+                    "https://console.developers.google.com/apis/api/sheets.googleapis.com/overview\n"
+                    f"Original error: {error_str}"
+                )
+                print(error_msg)
+            else:
+                print(f"ERROR connecting to Google Sheet: {e}")
+                print(f"Error type: {type(e).__name__}")
+                print(f"Traceback:\n{traceback.format_exc()}")
+            return None, None
+    return _client, _sheet
+
+# ... (rest of the file remains the same - copy from attendance_sheet.py)
+

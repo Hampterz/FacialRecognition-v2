@@ -1,0 +1,41 @@
+========================================
+Quick Push to GitHub - Steps
+========================================
+
+Your changes are staged and ready! Follow these steps:
+
+STEP 1: Configure Git (if not already done)
+--------------------------------------------
+Run these commands (use your actual name and email):
+
+git config --global user.email "your-email@example.com"
+git config --global user.name "Your Name"
+
+STEP 2: Commit the Changes
+---------------------------
+git commit -m "Remove overlapping subtitle text from GUI header"
+
+STEP 3: Check if Remote is Configured
+--------------------------------------
+git remote -v
+
+If you see a remote URL, skip to Step 5.
+If you see nothing, continue to Step 4.
+
+STEP 4: Add GitHub Remote (First Time Only)
+--------------------------------------------
+1. Create a repository on GitHub: https://github.com/new
+2. Copy the repository URL
+3. Run:
+   git remote add origin https://github.com/YOUR_USERNAME/REPO_NAME.git
+
+STEP 5: Push to GitHub
+-----------------------
+# If this is the first push:
+git branch -M main
+git push -u origin main
+
+# If you've pushed before:
+git push
+
+That's it! Your changes are now on GitHub.
